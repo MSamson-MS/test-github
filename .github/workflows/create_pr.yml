@@ -12,10 +12,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Create PR in MSamson-MS/test-azure
+      - name: Set up Git
         run: |
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+
+      - name: Create PR in MSamson-MS/test-azure
+        run: |
           git fetch origin
           git checkout -b automatic-pr origin/automatic-pr || git checkout -b automatic-pr
           git push origin automatic-pr
@@ -23,7 +26,7 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.TOKEN }}
           commit-message: Automatically create PR
           branch: automatic-pr
           title: Automatically created PR
