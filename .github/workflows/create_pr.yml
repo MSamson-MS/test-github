@@ -23,6 +23,6 @@ jobs:
             - name: Configure GitHub CLI
               run: |
                 gh config set prompt disabled
-                gh auth login --with-token < ${{secrets.TOKEN}}
+                gh auth login --with-token ${{secrets.TOKEN}}
         
            
