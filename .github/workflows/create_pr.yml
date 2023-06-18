@@ -19,7 +19,7 @@ jobs:
           token: ${{ secrets.TOKEN }}
           commit-message: 'Merge test branch to main'
           title: 'Merge test branch to main'
-          branch: main
+          branch: test-to-main
           base: main
           head: MSamson-MS:test
           repository: MSamson-MS/test-azure
