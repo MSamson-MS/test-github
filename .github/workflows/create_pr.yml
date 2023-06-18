@@ -3,7 +3,7 @@ name: Sync Pull Request
 on:
   pull_request:
     branches:
-      - main
+      - test
 
 jobs:
   sync_pull_request:
@@ -12,22 +12,26 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      
-      - name: Push changes to test branch
-        uses: ad-m/github-push-action@v0.6.0
-        with:
-            github_token: ${{ secrets.TOKEN }}
-            branch: test
-            repository: MSamson-MS/test-azure
 
-        
-      - name: Create pull request in test-azure
-        uses: peter-evans/create-pull-request@v3
+      - name: Set up GitHub CLI
+        uses: actions/setup-node@v2
         with:
-          token: ${{ secrets.TOKEN }}
-          commit-message: 'Merge test branch to main'
-          title: 'Merge test branch to main'
-          branch: test
-          base: main
-          head: MSamson-MS:test
-          repository: MSamson-MS/test-azure
+          node-version: '14'
+
+      - name: Authenticate with GitHub CLI
+        run: echo ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token
+
+      - name: Create branch
+        run: gh repo create-branch MSamson-MS/test-github --branch test-to-main
+
+      - name: Push changes
+        run: |
+          git config user.name "Your Name"
+          git config user.email "youremail@example.com"
+          git checkout test-to-main
+          git add .
+          git commit -m "Sync changes from test branch"
+          git push origin test-to-main
+
+      - name: Create pull request in test-azure
+        run: gh pr create --title "Merge test branch to main" --body "Please review and merge the changes" --base main --head MSamson-MS:test --repo MSamson-MS/test-azure
