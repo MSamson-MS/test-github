@@ -18,7 +18,7 @@ jobs:
         with:
             github_token: ${{ secrets.TOKEN }}
             branch: test
-            repository: MSamson-MS/test-github
+            repository: MSamson-MS/test-azure
 
         
       - name: Create pull request in test-azure
