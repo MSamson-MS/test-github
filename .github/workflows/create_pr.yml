@@ -1,37 +1,28 @@
-name: Sync Pull Request
+name: Sync Repos
 
 on:
-  pull_request:
-    branches:
-      - main
-
+    pull_request:
+        branches:
+            - main
+    
 jobs:
-  sync_pull_request:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Set up GitHub CLI
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14'
-
-      - name: Authenticate with GitHub CLI
-        run: echo ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token
-
-      - name: Create branch
-        run: gh repo create-branch MSamson-MS/test-github --branch test-to-main
-
-      - name: Push changes
-        run: |
-          git config user.name "Your Name"
-          git config user.email "youremail@example.com"
-          git checkout test-to-main
-          git add .
-          git commit -m "Sync changes from test branch"
-          git push origin test-to-main
-
-      - name: Create pull request in test-azure
-        run: gh pr create --title "Merge test branch to main" --body "Please review and merge the changes" --base main --head MSamson-MS:test --repo MSamson-MS/test-azure
+    build:
+        runs-on: ubuntu-latest
+    
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
+        
+            - name: Set up GitHub CLI
+              run: |
+                curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo gpg --dearmor -o /usr/share/keyrings/githubcli-archive-keyring.gpg
+                echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+                sudo apt update
+                sudo apt install gh
+        
+            - name: Configure GitHub CLI
+              run: |
+                gh config set prompt disabled
+                gh auth login --with-token < ${secrets.TOKEN}
+        
+           
