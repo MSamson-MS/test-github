@@ -16,7 +16,7 @@ jobs:
       - name: Push to test branch in MSamson-MS/test-azure
         uses: ad-m/github-push-action@master
         with:
-          token: ${{ secrets.TOKEN }}
+          github_token: ${{ secrets.TOKEN }}
           branch: test
           repository: MSamson-MS/test-azure
           directory: ./
