@@ -1,28 +1,36 @@
-name: Sync Repos
+name: Pull Request Workflow
 
 on:
-    pull_request:
-        branches:
-            - main
-    
+  pull_request:
+    branches:
+      - main
+
 jobs:
-    build:
-        runs-on: ubuntu-latest
-    
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v2
-        
-            - name: Set up GitHub CLI
-              run: |
-                curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo gpg --dearmor -o /usr/share/keyrings/githubcli-archive-keyring.gpg
-                echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
-                sudo apt update
-                sudo apt install gh
-        
-            - name: Configure GitHub CLI
-              run: |
-                gh config set prompt disabled
-                gh auth login --with-token ${{secrets.TOKEN}}
-        
-           
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Push to test branch in MSamson-MS/test-azure
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.TOKEN }}
+          branch: test
+          repository: MSamson-MS/test-azure
+          directory: ./
+
+      - name: Create Pull Request in MSamson-MS/test-github
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ secrets.TOKEN }}
+          branch: test
+          commit-message: Automatically created pull request
+          title: Automated pull request
+          body: |
+            This pull request is automatically created when a pull request is made to the 'main' branch.
+          labels: automated
+          draft: false
+          base: main
+          repository: MSamson-MS/test-github
