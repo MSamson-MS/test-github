@@ -1,0 +1,27 @@
+name: Auto Create PR in MSamson-MS/test-azure
+on:
+  pull_request:
+    types:
+      - opened
+
+jobs:
+  create_pr:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Create PR in MSamson-MS/test-azure
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ secrets.TOKEN }}
+          commit-message: Automatically create PR
+          branch: automatic-pr
+          title: Automatically created PR
+          body: |
+            This PR is automatically created in response to a PR in MSamson-MS/test-github.
+            Please review and merge if appropriate.
+          base: main
+          draft: false
+          target: MSamson-MS/test-azure
