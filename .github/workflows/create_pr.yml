@@ -12,14 +12,22 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+      
+      - name: Push changes to test branch
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+            github_token: ${{ secrets.TOKEN }}
+            branch: test
+            repository: MSamson-MS/test-github
 
+        
       - name: Create pull request in test-azure
         uses: peter-evans/create-pull-request@v3
         with:
           token: ${{ secrets.TOKEN }}
           commit-message: 'Merge test branch to main'
           title: 'Merge test branch to main'
-          branch: test-to-main
+          branch: test
           base: main
           head: MSamson-MS:test
           repository: MSamson-MS/test-azure
