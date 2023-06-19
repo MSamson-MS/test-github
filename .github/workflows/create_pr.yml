@@ -27,20 +27,25 @@ jobs:
       
       - name: Merge the current branch in test-github with the new branch in test-azure
         run: |
+          # Install jq for JSON parsing
           sudo apt-get update && sudo apt-get install -y jq
 
+          # Get the pull request number from the event payload
           PR_NUMBER=$(curl -s "${{ github.event.pull_request.url }}" | jq -r '.number')
 
+          # Create the merge request in the test-azure repository
           RESPONSE=$(curl -s -X POST \
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: Bearer ${{ secrets.TOKEN }}" \
             -d '{"head": "test-github:'"${{ github.head_ref }}"'", "base": "main"}' \
             "https://api.github.com/repos/MSamson-MS/test-azure/pulls")
 
+          # Extract the merge status and error message from the response
           MERGE_STATUS=$(echo $RESPONSE | jq -r '.merged')
+          ERROR_MESSAGE=$(echo $RESPONSE | jq -r '.message')
 
           if [[ "$MERGE_STATUS" == "true" ]]; then
             echo "Pull request successfully merged!"
           else
-            echo "Failed to merge the pull request."
+            echo "Failed to merge the pull request. Error message: $ERROR_MESSAGE"
           fi
