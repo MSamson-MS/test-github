@@ -23,5 +23,5 @@ jobs:
           git checkout -B ${{ github.head_ref }} test-azure/main
           git push -f test-azure ${{ github.head_ref }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
         if: github.event_name == 'pull_request'
