@@ -1,49 +1,33 @@
-name: Pull Request
+name: Pull Request Workflow
 
 on:
   pull_request:
-    branches:
-      - main
+    types:
+      - opened
 
 jobs:
-  merge:
+  merge_to_azure:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repositories
+      - name: Checkout repository
         uses: actions/checkout@v2
-        with:
-          repositories: |
-            MSamson-MS/test-github
-            MSamson-MS/test-azure
 
-      - name: Configure Git user
+      - name: Create new branch in test-azure
         run: |
-          git config --global user.name "Your Name"
-          git config --global user.email "youremail@example.com"
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
 
-      - name: Merge pull request
-        env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+          git checkout -b azure-branch
+
+          # Push the newly created branch to test-azure repository
+          git push origin azure-branch
+
+      - name: Merge pull request branch into azure-branch
         run: |
-          # Get the pull request number
-          PR_NUMBER=${{ github.event.pull_request.number }}
+          git fetch origin pull/${{ github.event.pull_request.number }}/head:pr-branch
+          git checkout azure-branch
+          git merge pr-branch
 
-          # Go into the "test-azure" repository directory
-          cd test-azure
-
-          # Fetch all branches from the remote repository
-          git fetch --all
-
-          # Switch to the pull request branch
-          git checkout "pull/$PR_NUMBER/head"
-
-          # Merge the pull request branch into main
-          git merge --no-ff HEAD -m "Merge pull request #$PR_NUMBER"
-
-          # Push the merged changes
-          git push origin main
-
-          # Clean up
-          cd ..
-          rm -rf test-azure
+          # Push the merged changes to test-azure repository
+          git push origin azure-branch
