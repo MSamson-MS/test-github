@@ -2,53 +2,35 @@ name: Pull Request
 
 on:
   pull_request:
-    branches: main
+    branches:
+      - main
 
 jobs:
-  Setup:
+  merge:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout test-azure
+      - name: Checkout test-github
         uses: actions/checkout@v2
         with:
-          token: ${{secrets.TOKEN}}
-          repository: MSamson-MS/test-azure
-          
-      - name: Create branch in test-azure
-        run: |
-            git config --global user.name "Your Name"
-            git config --global user.email "youremail@example.com"
-            git checkout -b ${{ github.head_ref }}
-            git push -u origin ${{ github.head_ref }}
+          repository: MSamson-MS/test-github
+
+      - name: Merge pull request
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
-        if: github.event_name == 'pull_request'
-      
-      - name: Merge the current branch in test-github with the new branch in test-azure
         run: |
-          # Install jq for JSON parsing
-          sudo apt-get update && sudo apt-get install -y jq
+          # Get the pull request number
+          PR_NUMBER=${{ github.event.pull_request.number }}
 
-          # Get the pull request number from the event payload
-          PR_NUMBER=$(curl -s "${{ github.event.pull_request.url }}" | jq -r '.number')
+          # Create a new branch to hold the pull request changes
+          git checkout -b pr-merge-$PR_NUMBER
 
-          # Create the merge request in the test-azure repository
-          RESPONSE=$(curl -s -X POST \
+          # Push the new branch to the "test-azure" repository
+          git push https://github.com/MSamson-MS/test-azure.git HEAD:pr-merge-$PR_NUMBER
+
+          # Merge the pull request in "test-azure" using the GitHub API
+          curl -X PUT \
             -H "Accept: application/vnd.github.v3+json" \
-            -H "Authorization: Bearer ${{ secrets.TOKEN }}" \
-            -d '{"head": "test-github:'"${{ github.head_ref }}"'", "base": "main"}' \
-            "https://api.github.com/repos/MSamson-MS/test-azure/pulls")
-
-          # Extract the merge status, error message, and status code from the response
-          MERGE_STATUS=$(echo $RESPONSE | jq -r '.merged')
-          ERROR_MESSAGE=$(echo $RESPONSE | jq -r '.message')
-          STATUS_CODE=$(echo $RESPONSE | jq -r '.status')
-
-          if [[ "$MERGE_STATUS" == "true" ]]; then
-            echo "Pull request successfully merged!"
-          else
-            echo "Failed to merge the pull request. Error message: $ERROR_MESSAGE"
-            echo "API status code: $STATUS_CODE"
-          fi
-
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -d '{"commit_title": "Merge pull request #'"$PR_NUMBER"'", "sha": "'"$GITHUB_SHA"'", "merge_method": "merge"}' \
+            "https://api.github.com/repos/MSamson-MS/test-azure/pulls/$PR_NUMBER/merge"
