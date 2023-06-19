@@ -2,8 +2,8 @@ name: Pull Request Workflow
 
 on:
   pull_request:
-    branches:
-      - main
+    types:
+      - opened
 
 jobs:
   merge_to_azure:
@@ -13,10 +13,10 @@ jobs:
       - name: Checkout test-github repository
         uses: actions/checkout@v2
 
-      - name: Checkout test-azure repository
-        uses: actions/checkout@v2
-        with:
-          repository: MSamson-MS/test-azure
+      - name: Clone test-azure repository
+        run: |
+          git clone https://github.com/MSamson-MS/test-azure.git
+          cd test-azure
 
       - name: Create new branch in test-azure
         run: |
