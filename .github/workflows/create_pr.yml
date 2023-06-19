@@ -19,9 +19,9 @@ jobs:
         run: |
           git config --global user.name "Your Name"
           git config --global user.email "youremail@example.com"
-          git checkout -b ${{ github.head_ref }}
-          git remote add test-azure https://github.com/MSamson-MS/test-azure.git
-          git push -f test-azure ${{ github.head_ref }}:${{ github.head_ref }}
+          git fetch test-azure
+          git checkout -B ${{ github.head_ref }} test-azure/main
+          git push -f test-azure ${{ github.head_ref }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: github.event_name == 'pull_request'
