@@ -10,11 +10,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout test-github repository
         uses: actions/checkout@v2
+
+      - name: Checkout test-azure repository
+        uses: actions/checkout@v2
+        with:
+          repository: MSamson-MS/test-azure
+          ref: azure-branch
 
       - name: Create new branch in test-azure
         run: |
+          cd test-azure
+
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
 
@@ -25,6 +33,8 @@ jobs:
 
       - name: Merge pull request branch into azure-branch
         run: |
+          cd test-azure
+
           git fetch origin pull/${{ github.event.pull_request.number }}/head:pr-branch
           git checkout azure-branch
           git merge pr-branch
