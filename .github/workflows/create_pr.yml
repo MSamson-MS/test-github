@@ -25,14 +25,32 @@ jobs:
           token: ${{secrets.TOKEN}}
           persist-credentials: true
       
-      - name: Copy all files from src to the new branch
+      - name: Copy common files to new test-azure
+        shell: bash
         run: |
-          cp -R src/. dest/
-          cd dest
-          git config user.name 'Your Name'
-          git config user.email 'your-email@example.com'
-          git add .
-          BRANCH_NAME=$(echo "${{ github.head_ref }}" | sed 's/refs\/pull\///')
-          git checkout -b $BRANCH_NAME
-          git commit -m "Copy files from src to the new branch"
+          cp -r src/. dest/
+      
+      - name: Check for new files
+        id: newFiles
+        shell: bash
+        working-directory: dest
+        run: |
+          git add -A
+          git status --porcelain | wc -l
+          if [[ $(git status --porcelain | wc -l) -gt 0 ]];
+            echo ":: set-output name=hasNewFiles::true"
+          else
+            echo ":: set-output name=hasNewFiles::false"
+          fi
+        
+      - name: Push New Files
+        if: ${{steps.newFIles.outputs.hasNewFiles == 'true'}}
+        shell: bash
+        working-directory: dest
+        run: |
+          git config --global user.name "sam[bot]"
+          git config --global user.email "sambot@gmail.com"
+          git commit -m "Updated common files"
+          git push
+          
       
