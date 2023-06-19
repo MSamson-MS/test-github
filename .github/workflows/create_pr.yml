@@ -15,10 +15,15 @@ jobs:
         with:
           repository: MSamson-MS/test-github
       
-      - name: Checkout test-github
+      - name: Checkout test-azure
         uses: actions/checkout@v2
         with:
           repository: MSamson-MS/test-azure
+      
+      - name: Configure Git user
+        run: |
+          git config --global user.name "Your Name"
+          git config --global user.email "youremail@example.com"
 
       - name: Merge pull request
         env:
