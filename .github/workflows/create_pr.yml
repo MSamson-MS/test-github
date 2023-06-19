@@ -17,19 +17,4 @@ jobs:
           
       - name: Create branch in test-azure
         run: |
-            git config --global user.name "Your Name"
-            git config --global user.email "youremail@example.com"
-            git checkout -b ${{ github.head_ref }}
-            git push -u origin ${{ github.head_ref }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
-        if: github.event_name == 'pull_request'
-      
-      - name: Update branch with code from test-github
-        run: |
-          git remote add test-github https://github.com/MSamson-MS/test-github.git
-          git fetch test-github
-          git checkout ${{ github.head_ref }}
-          git merge test-github/$(git rev-parse --abbrev-ref HEAD) --no-commit --allow-unrelated-histories --strategy-option=theirs
-        env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+            cd test-azure
