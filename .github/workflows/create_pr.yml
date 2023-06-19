@@ -50,7 +50,8 @@ jobs:
         run: |
           git config --global user.name "sam[bot]"
           git config --global user.email "sambot@gmail.com"
+          git checkout -b test
           git commit -m "Updated common files"
-          git push HEAD:main
+          git push origin test
           
       
