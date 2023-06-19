@@ -22,9 +22,6 @@ jobs:
         run: |
           cd test-azure
 
-          git config --global user.email "action@github.com"
-          git config --global user.name "GitHub Action"
-
           git checkout -b azure-branch
 
           # Push the newly created branch to test-azure repository
