@@ -22,7 +22,7 @@ jobs:
             git checkout -b ${{ github.head_ref }}
             git push -u origin ${{ github.head_ref }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
         if: github.event_name == 'pull_request'
       
       - name: Update branch with code from test-github
@@ -32,4 +32,4 @@ jobs:
           git checkout ${{ github.head_ref }}
           git merge test-github/$(git rev-parse --abbrev-ref HEAD) --no-commit --allow-unrelated-histories --strategy-option=theirs
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
