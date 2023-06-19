@@ -40,12 +40,15 @@ jobs:
             -d '{"head": "test-github:'"${{ github.head_ref }}"'", "base": "main"}' \
             "https://api.github.com/repos/MSamson-MS/test-azure/pulls")
 
-          # Extract the merge status and error message from the response
+          # Extract the merge status, error message, and status code from the response
           MERGE_STATUS=$(echo $RESPONSE | jq -r '.merged')
           ERROR_MESSAGE=$(echo $RESPONSE | jq -r '.message')
+          STATUS_CODE=$(echo $RESPONSE | jq -r '.status')
 
           if [[ "$MERGE_STATUS" == "true" ]]; then
             echo "Pull request successfully merged!"
           else
             echo "Failed to merge the pull request. Error message: $ERROR_MESSAGE"
+            echo "API status code: $STATUS_CODE"
           fi
+
