@@ -6,14 +6,31 @@ on:
       - main
 
 jobs:
-  build:
+  Setup:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout test-github
         uses: actions/checkout@v2
       
-      - name: Checkiut test-azure
+      - name: Checkout test-azure
         uses: actions/checkout@v2
         with:
           repository: MSamson-MS/test-azure
+          ref: test
+          
+  Sync:
+    needs: Setup
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Create pull request in test-azure
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'Sync branch to test-azure'
+          branch: ${{ github.head_ref }}
+          title: 'Sync branch to test-azure'
+          body: 'This pull request is automatically generated to sync the changes from test-github branch.'
+          base: test
+          draft: false
