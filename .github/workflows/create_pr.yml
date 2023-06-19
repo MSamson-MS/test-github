@@ -21,7 +21,7 @@ jobs:
           repository: MSamson-MS/test-azure
           directory: ./
 
-      - name: Create Pull Request in MSamson-MS/test-github
+      - name: Create Pull Request in MSamson-MS/test-azure
         uses: peter-evans/create-pull-request@v3
         with:
           token: ${{ secrets.TOKEN }}
@@ -33,4 +33,4 @@ jobs:
           labels: automated
           draft: false
           base: main
-          repository: MSamson-MS/test-github
+          repository: MSamson-MS/test-azure
