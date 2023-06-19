@@ -27,12 +27,20 @@ jobs:
       
       - name: Merge the current branch in test-github with the new branch in test-azure
         run: |
-            git config --global user.name "Your Name"
-            git config --global user.email "youremail@example.com"
-            git remote add test-azure https://github.com/MSamson-MS/test-azure.git
-            git fetch test-azure
-            git checkout test-azure/${{ github.head_ref }}
-            git merge ${{ github.ref }}
-            git push test-azure HEAD:main
-        env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+          sudo apt-get update && sudo apt-get install -y jq
+
+          PR_NUMBER=$(curl -s "${{ github.event.pull_request.url }}" | jq -r '.number')
+
+          RESPONSE=$(curl -s -X POST \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: Bearer ${{ secrets.TOKEN }}" \
+            -d '{"head": "test-github:'"${{ github.head_ref }}"'", "base": "main"}' \
+            "https://api.github.com/repos/MSamson-MS/test-azure/pulls")
+
+          MERGE_STATUS=$(echo $RESPONSE | jq -r '.merged')
+
+          if [[ "$MERGE_STATUS" == "true" ]]; then
+            echo "Pull request successfully merged!"
+          else
+            echo "Failed to merge the pull request."
+          fi
