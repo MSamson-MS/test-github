@@ -24,3 +24,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: github.event_name == 'pull_request'
+      
+      - name: Update branch with code from test-github
+        run: |
+          git remote add test-github https://github.com/MSamson-MS/test-github.git
+          git fetch test-github
+          git checkout ${{ github.head_ref }}
+          git merge test-github/$(git rev-parse --abbrev-ref HEAD) --no-commit
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
