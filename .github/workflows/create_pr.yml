@@ -1,50 +1,26 @@
-name: Pull Request Workflow
+name: Pull Request
 
 on:
   pull_request:
-    branches:
-      - main
+    branches: main
 
 jobs:
   Setup:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout test-github
+      - name: Checkout test-azure
         uses: actions/checkout@v2
-      
+        with:
+          token: ${{secrets.TOKEN}}
+          repository: MSamson-MS/test-azure
+
       - name: Create branch in test-azure
         run: |
-          git config --global user.name "Your Name"
-          git config --global user.email "youremail@example.com"
-          git checkout -b ${{ github.head_ref }}
-          git push -u origin ${{ github.head_ref }}
+            git config --global user.name "Your Name"
+            git config --global user.email "youremail@example.com"
+            git checkout -b ${{ github.head_ref }}
+            git push -u origin ${{ github.head_ref }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: github.event_name == 'pull_request'
-          
-  Sync:
-    needs: Setup
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout test-github
-        uses: actions/checkout@v2
-        with:
-          ref: ${{ github.head_ref }}
-      
-      - name: Copy branch changes to test-azure
-        run: |
-          git remote add test-azure https://github.com/MSamson-MS/test-azure.git
-          git push -u test-azure ${{ github.head_ref }}
-      
-      - name: Create pull request in test-azure
-        uses: peter-evans/create-pull-request@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: 'Sync branch from test-github to test-azure'
-          branch: ${{ github.head_ref }}
-          title: 'Sync branch from test-github to test-azure'
-          body: 'This pull request is automatically generated to sync the changes from test-github branch.'
-          base: test
-          draft: false
