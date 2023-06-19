@@ -25,15 +25,16 @@ jobs:
           token: ${{secrets.TOKEN}}
           persist-credentials: true
       
-      - name: Copy all the files from src to dest
+      - name: Create new branch with the same name in dest
+        run: |
+          cd dest
+          BRANCH_NAME=$(echo "${{ github.head_ref }}" | sed 's/refs\/pull\///')
+          git checkout -b $BRANCH_NAME
+      
+      - name: Copy all files from src to the new branch
         run: |
           cp -R src/. dest/
-
-      - name: Commit and push changes
-        run: |
-          cd dest/
-          git config user.name "Your GitHub Username"
-          git config user.email "Your GitHub Email"
+          cd dest
           git add .
-          git commit -m "Merge changes from src"
-          git push origin main
+          git commit -m "Copy files from src to the new branch"
+      
