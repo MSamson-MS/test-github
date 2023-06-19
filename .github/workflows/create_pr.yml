@@ -36,4 +36,4 @@ jobs:
               body: 'This pull request merges the test branch into the main branch.'
             });
             console.log(`Pull request created: ${data.html_url}`);
-          token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
