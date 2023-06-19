@@ -10,38 +10,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Set up Git config
+      - name: Checkout source
+        uses: actions/checkout@v3
+        with:
+          path: 'src'
+          repository: 'MSamson-MS/test-github'
+          persist-credentials: false
+      
+      - name: Checkout destination
+        uses: actions/checkout@v3
+        with:
+          path: 'dest'
+          repository: 'MSamson-MS/test-azure'
+          token: ${{secrets.TOKEN}}
+          persist-credentials: true
+      
+      - name: Copy all the files from src to dest
         run: |
-          git config --global user.email "your-email@example.com"
-          git config --global user.name "Your Name"
-        
-      - name: Checkout test-github repository
-        uses: actions/checkout@v2
+          cp -R src/. dest/
 
-      - name: Clone test-azure repository
+      - name: Commit and push changes
         run: |
-          git clone https://github.com/MSamson-MS/test-azure.git
-          cd test-azure
-
-      - name: Create new branch in test-azure
-        run: |
-          cd test-azure
-
-          git config --global user.email "action@github.com"
-          git config --global user.name "GitHub Action"
-
-          git checkout -b azure-branch
-
-          # Push the newly created branch to test-azure repository
-          git push origin azure-branch
-
-      - name: Merge pull request branch into azure-branch
-        run: |
-          cd test-azure
-
-          git fetch origin pull/${{ github.event.pull_request.number }}/head:pr-branch
-          git checkout azure-branch
-          git merge pr-branch
-
-          # Push the merged changes to test-azure repository
-          git push origin azure-branch
+          cd dest/
+          git config user.name "Your GitHub Username"
+          git config user.email "Your GitHub Email"
+          git add .
+          git commit -m "Merge changes from src"
+          git push origin main
