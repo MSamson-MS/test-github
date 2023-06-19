@@ -16,24 +16,18 @@ jobs:
           token: ${{ secrets.TOKEN }}
           repository: MSamson-MS/test-azure
       
-      - name: Push to test-azure
-        uses: ad-m/github-push-action@master
-        with:
-          branch: test
-          github_token: ${{ secrets.TOKEN }}
-          repository: MSamson-MS/test-azure
-      
+      - name: Set up Git
+        run: |
+            git config --global user.name "GITHUB_ACTION"
+            git config --global user.email "gitaction@github.com"
+  
       - name: Create Pull Request
-        uses: actions/github-script@v4
+        uses: peter-evans/create-pull-request@v3
         with:
-          script: |
-            const { data } = await github.pulls.create({
-              owner: 'MSamson-MS',
-              repo: 'test-azure',
-              title: 'Merge test branch into main',
-              head: 'MSamson-MS:test',
-              base: 'main',
-              body: 'This pull request merges the test branch into the main branch.'
-            });
-            console.log(`Pull request created: ${data.html_url}`);
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+            token: ${{ secrets.GITHUB_TOKEN }}
+            commit-message: 'Created pull request'
+            title: 'Pull Request Title'
+            body: 'Pull Request Description'
+            branch: test
+            base: 'main'
+            repository: MSamson-MS/test-azure
