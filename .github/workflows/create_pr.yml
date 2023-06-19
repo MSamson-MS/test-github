@@ -22,3 +22,9 @@ jobs:
           branch: test
           github_token: ${{ secrets.TOKEN }}
           repository: MSamson-MS/test-azure
+      
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.TOKEN }}
+          repository: MSamson-MS/test-azure
