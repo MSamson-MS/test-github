@@ -19,18 +19,3 @@ jobs:
           github_token: ${{ secrets.TOKEN }}
           branch: test
           repository: MSamson-MS/test-azure
-          directory: ./
-
-      - name: Create Pull Request in MSamson-MS/test-azure
-        uses: peter-evans/create-pull-request@v3
-        with:
-          token: ${{ secrets.TOKEN }}
-          branch: test
-          commit-message: Automatically created pull request
-          title: Automated pull request
-          body: |
-            This pull request is automatically created when a pull request is made to the 'main' branch.
-          labels: automated
-          draft: false
-          base: main
-          repository: MSamson-MS/test-azure
