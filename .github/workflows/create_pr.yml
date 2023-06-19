@@ -14,14 +14,13 @@ jobs:
         with:
           token: ${{secrets.TOKEN}}
           repository: MSamson-MS/test-azure
-
+          
       - name: Create branch in test-azure
         run: |
-          git config --global user.name "Your Name"
-          git config --global user.email "youremail@example.com"
-          git fetch MSamson-MS/test-azure
-          git checkout -B ${{ github.head_ref }} MSamson-MS/test-azure/main
-          git push -f MSamson-MS/test-azure ${{ github.head_ref }}
+            git config --global user.name "Your Name"
+            git config --global user.email "youremail@example.com"
+            git checkout -b ${{ github.head_ref }}
+            git push -u origin ${{ github.head_ref }}
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: github.event_name == 'pull_request'
