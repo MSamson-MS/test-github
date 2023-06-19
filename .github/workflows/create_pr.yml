@@ -14,30 +14,37 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: MSamson-MS/test-github
-      
-      - name: Checkout test-azure
-        uses: actions/checkout@v2
-        with:
-          repository: MSamson-MS/test-azure
-    
+
+      - name: Configure Git user
+        run: |
+          git config --global user.name "Your Name"
+          git config --global user.email "youremail@example.com"
+
       - name: Merge pull request
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
         run: |
-          git config --global user.name "Your Name"
-          git config --global user.email "youremail@example.com"
           # Get the pull request number
           PR_NUMBER=${{ github.event.pull_request.number }}
 
-          # Create a new branch to hold the pull request changes
-          git checkout -b pr-merge-$PR_NUMBER
+          # Clone the "test-azure" repository
+          git clone https://github.com/MSamson-MS/test-azure.git
 
-          # Push the new branch to the "test-azure" repository
-          git push https://github.com/MSamson-MS/test-azure.git HEAD:pr-merge-$PR_NUMBER
+          # Go into the repository directory
+          cd test-azure
 
-          # Merge the pull request in "test-azure" using the GitHub API
-          curl -X PUT \
-            -H "Accept: application/vnd.github.v3+json" \
-            -H "Authorization: Bearer $GITHUB_TOKEN" \
-            -d '{"commit_title": "Merge pull request #'"$PR_NUMBER"'", "sha": "'"$GITHUB_SHA"'", "merge_method": "merge"}' \
-            "https://api.github.com/repos/MSamson-MS/test-azure/pulls/$PR_NUMBER/merge"
+          # Fetch the pull request branch
+          git fetch origin pull/$PR_NUMBER/head:pr-merge-$PR_NUMBER
+
+          # Checkout the pull request branch
+          git checkout pr-merge-$PR_NUMBER
+
+          # Merge the pull request branch into main
+          git merge --no-ff pr-merge-$PR_NUMBER -m "Merge pull request #$PR_NUMBER"
+
+          # Push the merged changes
+          git push origin main
+
+          # Clean up
+          cd ..
+          rm -rf test-azure
