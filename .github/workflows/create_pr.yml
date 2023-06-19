@@ -2,8 +2,8 @@ name: Pull Request Workflow
 
 on:
   pull_request:
-    types:
-      - opened
+    branches:
+      - main
 
 jobs:
   merge_to_azure:
