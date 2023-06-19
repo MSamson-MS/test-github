@@ -10,10 +10,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout test-github
+      - name: Checkout repositories
         uses: actions/checkout@v2
         with:
-          repository: MSamson-MS/test-github
+          repositories: |
+            MSamson-MS/test-github
+            MSamson-MS/test-azure
 
       - name: Configure Git user
         run: |
@@ -27,20 +29,17 @@ jobs:
           # Get the pull request number
           PR_NUMBER=${{ github.event.pull_request.number }}
 
-          # Clone the "test-azure" repository
-          git clone https://github.com/MSamson-MS/test-azure.git
-
-          # Go into the repository directory
+          # Go into the "test-azure" repository directory
           cd test-azure
 
-          # Fetch the pull request branch
-          git fetch origin pull/$PR_NUMBER/head:pr-merge-$PR_NUMBER
+          # Fetch all branches from the remote repository
+          git fetch --all
 
-          # Checkout the pull request branch
-          git checkout pr-merge-$PR_NUMBER
+          # Switch to the pull request branch
+          git checkout "pull/$PR_NUMBER/head"
 
           # Merge the pull request branch into main
-          git merge --no-ff pr-merge-$PR_NUMBER -m "Merge pull request #$PR_NUMBER"
+          git merge --no-ff HEAD -m "Merge pull request #$PR_NUMBER"
 
           # Push the merged changes
           git push origin main
