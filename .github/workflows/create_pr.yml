@@ -10,7 +10,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
       - name: Set up Git config
         run: |
           git config --global user.email "your-email@example.com"
