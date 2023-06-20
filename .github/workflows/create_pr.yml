@@ -47,7 +47,7 @@ jobs:
         shell: bash
         working-directory: dest
         run: |
-          git remote add origin https://sambot:sambot@github.com/MSamson-MS/test-azure.git
+          git remote set-url origin https://sambot:sambot@github.com/MSamson-MS/test-azure.git
           git checkout -b test
           git commit -m "Updated common files"
           git push origin test
