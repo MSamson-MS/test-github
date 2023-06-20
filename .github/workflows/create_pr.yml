@@ -44,9 +44,9 @@ jobs:
       - name: Push changes
         if: steps.check_changes.outputs.changes == 'true'
         run: |
-          cd dest
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
+          git checkout -b update-branch
           git add .
           git commit -m "Update common files"
-          git push
+          git push origin HEAD:update-branch
