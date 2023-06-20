@@ -47,8 +47,7 @@ jobs:
         shell: bash
         working-directory: dest
         run: |
-          git config --global user.name "sam[bot]"
-          git config --global user.email "sambot@gmail.com"
+          git remote add origin https://sambot:sambot@github.com/MSamson-MS/test-azure.git
           git checkout -b test
           git commit -m "Updated common files"
           git push origin test
