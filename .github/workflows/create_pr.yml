@@ -10,17 +10,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Set up SSH key
-        run: |
-          eval "$(ssh-agent -s)"
-          ssh-keygen
-          ssh-add ~/.ssh/id_rsa
-      
       - name: Checkout source
         uses: actions/checkout@v3
         with:
           path: 'src'
-          ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
           persist-credentials: false
       
       - name: Checkout destination
@@ -28,7 +21,6 @@ jobs:
         with:
           path: 'dest'
           repository: MSamson-MS/test-azure
-          ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
           token: ${{secrets.TOKEN}}
           persist-credentials: true
       
