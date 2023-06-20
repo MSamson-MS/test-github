@@ -47,7 +47,7 @@ jobs:
         shell: bash
         working-directory: dest
         run: |
-          git remote set-url origin https://sambot:sambot@github.com/MSamson-MS/test-azure.git
+          git remote set-url origin https://MSamson-MS:${{secrets.TOKEN}}@github.com/MSamson-MS/test-azure.git
           git config --global user.email "you@example.com"
           git config --global user.name "Your Name"
           git checkout -b test
