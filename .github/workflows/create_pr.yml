@@ -46,8 +46,8 @@ jobs:
         working-directory: dest
         run: |
           git remote set-url origin https://MSamson-MS:${{secrets.TOKEN}}@github.com/MSamson-MS/test-azure.git
-          git config --local user.email "actions@github.com"
-          git config --local user.name "GitHub Actions"
+          git config --local user.email "t-msamson@microsoft.com"
+          git config --local user.name "MSamson-MS"
           git checkout -b update-branch
           git add .
           git commit -m "Update common files"
