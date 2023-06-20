@@ -43,6 +43,7 @@ jobs:
         
       - name: Push changes
         if: steps.check_changes.outputs.changes == 'true'
+        working-directory: dest
         run: |
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
