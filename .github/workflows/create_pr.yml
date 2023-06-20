@@ -29,29 +29,24 @@ jobs:
         run: |
           cp -r src/. dest/
       
-      - name: Check for new files
-        id: newFiles
-        shell: bash
-        working-directory: dest
+      - name: Check for changes
+        id: check_changes
         run: |
-          git add -A
-          git status --porcelain | wc -l
-          if [[ $(git status --porcelain | wc -l) -gt 0 ]]; then
-            echo "::set-output name=hasNewFiles::true"
+          cd dest
+          if [[ -n $(git status -s) ]]; then
+            echo "Changes detected in repository"
+            echo "::set-output name=changes::true"
           else
-            echo "::set-output name=hasNewFiles::false"
+            echo "No changes detected in repository"
+            echo "::set-output name=changes::false"
           fi
         
-      - name: Push New Files
-        if: ${{ steps.newFiles.outputs.hasNewFiles == 'true' }}
-        shell: bash
-        working-directory: dest
+      - name: Push changes
+        if: steps.check_changes.outputs.changes == 'true'
         run: |
-          git remote set-url origin https://MSamson-MS:${{secrets.TOKEN}}@github.com/MSamson-MS/test-azure.git
-          git config --global user.email "you@example.com"
-          git config --global user.name "Your Name"
-          git checkout -b test
-          git commit -m "Updated common files"
-          git push -f origin test
-          
-      
+          cd dest
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
+          git add .
+          git commit -m "Update common files"
+          git push
